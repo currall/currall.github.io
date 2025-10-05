@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+	<title>text</title>
+	<style>
+	  html,body {
+		height:100%;
+		margin:0;
+		overflow: hidden;
+		background:#000;
+		color:#fff;
+    font-family: monospace;
+	  }
+	  textarea {
+		box-sizing:border-box;
+		width:100%;
+		height:100%;
+		padding:24px;
+		outline:none;
+		background:transparent;
+		color:inherit;
+		font-size:18px;
+		line-height:1.5;
+		border:none;
+		resize:none;
+	  }
+	</style>
+</head>
+<body>
+  <textarea id="editor" spellcheck="false" autofocus placeholder="Start typing..."></textarea>
+  <input id="fileInput" type="file" accept=".txt,text/plain" style="display:none">
+
+	<script>
+	const editor = document.getElementById('editor');
+	const fileInput = document.getElementById('fileInput');
+
+	window.addEventListener('keydown', (e) => {
+	  const meta = e.ctrlKey || e.metaKey;
+
+	  // save with ctrl +s 
+	  if (meta && e.key.toLowerCase() === 's') {
+		e.preventDefault();
+		const text = editor.value;
+		const blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = "untitled.txt";
+		a.click();
+		URL.revokeObjectURL(url);
+		return;
+	  }
+
+	  // open with ctrl+shift+o
+	  if (meta && e.shiftKey && e.key.toLowerCase() === 'o') { // ctrl+o is restricted :(
+		e.preventDefault();
+		fileInput.click();
+		return;
+	  }
+	});
+
+	// open file
+	fileInput.addEventListener('change', (e) => {
+	  const file = e.target.files[0];
+	  if (!file) return;
+	  const reader = new FileReader();
+	  reader.onload = () => {
+		editor.value = reader.result;
+		editor.focus();
+	  };
+	  reader.readAsText(file);
+	  fileInput.value = ''; // reset so same file can be reopened later
+	});
+	</script>
+</body>
+</html>
