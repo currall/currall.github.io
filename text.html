@@ -9,7 +9,7 @@
 		overflow: hidden;
 		background:#000;
 		color:#fff;
-    font-family: monospace;
+		font-family: monospace;
 	  }
 	  textarea {
 		box-sizing:border-box;
@@ -27,7 +27,7 @@
 	</style>
 </head>
 <body>
-  <textarea id="editor" spellcheck="false" autofocus placeholder="Start typing..."></textarea>
+  <textarea id="editor" spellcheck="false" autofocus placeholder="Alt+S to Save, Alt+O to Open. Start typing..."></textarea>
   <input id="fileInput" type="file" accept=".txt,text/plain" style="display:none">
 
 	<script>
@@ -35,24 +35,25 @@
 	const fileInput = document.getElementById('fileInput');
 
 	window.addEventListener('keydown', (e) => {
-	  const meta = e.ctrlKey || e.metaKey;
+	  const meta = e.altKey || e.metaKey;
 
 	  // save with ctrl +s 
 	  if (meta && e.key.toLowerCase() === 's') {
 		e.preventDefault();
 		const text = editor.value;
 		const blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+		const name = prompt("Filename to save as:", "untitled.txt") || "untitled.txt";
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = "untitled.txt";
+		a.download = name;
 		a.click();
 		URL.revokeObjectURL(url);
 		return;
 	  }
 
 	  // open with ctrl+shift+o
-	  if (meta && e.shiftKey && e.key.toLowerCase() === 'o') { // ctrl+o is restricted :(
+	  if (meta && e.key.toLowerCase() === 'o') { // ctrl+o is restricted :(
 		e.preventDefault();
 		fileInput.click();
 		return;
